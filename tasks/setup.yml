@@ -1,4 +1,10 @@
 ---
+- name: set vars
+  set_fact:
+    docker_image: lscr.io/linuxserver/plex
+    docker_container: plex
+    docker_network: app-network
+
 - name: Create config directory
   ansible.builtin.file:
     path: "{{app_plex_dir}}/config"
@@ -23,28 +29,28 @@
     group: "{{app_plex_pgid}}"
     mode: 0755
 
-- name: Ensure linuxserver/plex image is pulled
+- name: Ensure image is pulled
   community.docker.docker_image:
-    name: lscr.io/linuxserver/plex
+    name: "{{ docker_image }}"
     source: pull
     force_source: yes
   register: pulled
 
-- name: Remove plex container
+- name: Remove container
   community.docker.docker_container:
-    name: plex
+    name: "{{ docker_container }}"
     state: absent
   when: pulled.changed
 
-- name: Get infos on plex container
+- name: Get infos on container
   community.docker.docker_container_info:
-    name: plex
+    name: "{{ docker_container }}"
   register: result
 
 - name: Create plex container
   ansible.builtin.shell: |
     docker run -d \
-    --name=plex \
+    --name={{docker_container}} \
     -e PUID={{app_plex_puid}} \
     -e PGID={{app_plex_pgid}} \
     -e TZ={{app_plex_tz}} \
@@ -52,9 +58,9 @@
     -v /{{app_plex_dir}}/config:/config:Z \
     -v /{{app_plex_dir}}/tv:/tv:Z \
     -v /{{app_plex_dir}}/movies:/movies:Z \
-    --network=app-network \
+    --network={{docker_network}} \
     --restart unless-stopped \
-    lscr.io/linuxserver/plex
+    {{docker_image}}
   when: 
     pulled.changed
     or
