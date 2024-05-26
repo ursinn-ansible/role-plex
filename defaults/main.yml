@@ -1,6 +1,6 @@
 ---
-app_plex_enabled: false
-app_plex_puid: '16704'
-app_plex_pgid: '16704'
-app_plex_tz: "Europe/Zurich"
-app_plex_dir: "/opt/app-plex"
+role_plex_puid: '1000'
+role_plex_pgid: '1000'
+role_plex_tz: 'Europe/Zurich'
+role_plex_dir: '/opt/app-plex'
+role_plex_media_dir: '/media'
