@@ -1,16 +1,21 @@
 ---
 - name: set vars
   set_fact:
-    docker_image: lscr.io/linuxserver/plex
-    docker_container: plex
-    docker_network: app-network
+    docker_image: '{{ role_plex_image }}'
+    docker_container: '{{ role_plex_container }}'
+    docker_puid: '{{ role_plex_puid }}'
+    docker_pgid: '{{ role_plex_pgid }}'
+    docker_tz: '{{ role_plex_tz }}'
+    docker_dir: '{{ role_plex_dir }}/config'
+    docker_network: '{{ role_plex_network }}'
+    plex_media: '{{ role_plex_media_dir }}'
 
-- name: Create config directory
+- name: Create directory
   ansible.builtin.file:
-    path: "{{role_plex_dir}}/config"
+    path: '{{docker_dir}}'
     state: directory
-    owner: "{{role_plex_puid}}"
-    group: "{{role_plex_pgid}}"
+    owner: '{{ docker_puid }}'
+    group: '{{ docker_pgid }}'
     mode: 0755
 
 - name: Ensure image is pulled
@@ -41,12 +46,12 @@
   ansible.builtin.shell: |
     docker run -d \
     --name={{docker_container}} \
-    -e PUID={{role_plex_puid}} \
-    -e PGID={{role_plex_pgid}} \
-    -e TZ={{role_plex_tz}} \
+    -e PUID={{docker_puid}} \
+    -e PGID={{docker_pgid}} \
+    -e TZ={{docker_tz}} \
     -e VERSION=docker \
-    -v {{role_plex_dir}}/config:/config:Z \
-    -v {{role_plex_media_dir}}:/media:Z \
+    -v {{docker_dir}}:/config:Z \
+    -v {{plex_media}}:/media:Z \
     --device=/dev/dri:/dev/dri \
     --network={{docker_network}} \
     --restart unless-stopped \

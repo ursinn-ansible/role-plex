@@ -1,6 +1,10 @@
 ---
+role_plex_image: 'lscr.io/linuxserver/plex'
+role_plex_container: 'plex'
 role_plex_puid: '1000'
 role_plex_pgid: '1000'
 role_plex_tz: 'Europe/Zurich'
 role_plex_dir: '/opt/app-plex'
-role_plex_media_dir: '/media'
+role_plex_network: 'app-network'
+
+role_plex_media_dir: '/opt/media'
